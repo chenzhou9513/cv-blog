@@ -235,15 +235,38 @@ Fast RCNN通过在训练时共享特征来解决这个问题。Fast RCNN中，SG
 <br />
 
 ## 4. faster R-CNN
-暂略
+
+使用fast RCNN后，目标检测的速度已经大大提升，此时Region propsal成为了速度的瓶颈。（检测0.2s，RP 2s）
+
+这有两个原因。一是CNN可以运行在GPU上，而产生候选区域的selective search算法是跑在CPU上的。二是selective search算法没有利用深度神经网络产生的特征。为了解决这两个问题，Region Proposal Networks(RPN)就由此提出。fast R-CNN和RPN相结合，就产生了更快的faster R-CNN.
+
+我们分别来看RPN的结构和训练方法。
+
+<br />
+
+### (1) RPN结构
+
+我们知道特征图(feature maps)包含了图片中对应的模式的响应，对于一个目标，我们可以通过特征图中的响应值的位置，大致确定其在原始图片中的位置。另一方面，不同的通道(channels)中的响应值会略有不同，结合不同通道的信息可以提取出目标在原图中更精确的位置。我们通过一个神经网络来做到这一点，这就是Region Proposal Networks.
+
+![RPN](res/RPN-anchor.png)
+
+具体来说，RPN在特征图上使用一个小的滑动窗口，在每个位置生成一系列的锚框(anchor)，锚框通过枚举尺寸(scale)和宽高比得到。再使用卷积神经网络提取特征，图中的filter为3x3x256。之后在特征上接入两个任务，分类和回归。分类器有一个1x1的卷积层和softmax层，最后得到该锚框是目标的概率和是背景的概率。回归器是一个1x1的卷积层，经过reshape得到锚框位置的修正量。
+
+不同的位置产生锚框的方式是一样的，而且对于不同的锚框来说，经过的网络是一样的。因此，如果物体经过平移，则其对应的特征响应也会平移，还是会有一个锚框产生正确的预测。所以说，这里产生锚框具有平移不变性。
+
+不同尺寸的锚框是在同一张特征图上产生的，这个策略是相对特别的，一般的方法是在不同大小的特征图上使用不同大小的卷积核产生锚框，但实验结果表明使用不同大小的特征图效果不好。
+
+### (2) 训练方式
+
+
+<br /><br />
 
 -------
 
 1. [Rich feature hierarchies for accurate object detection and semantic segmentation](https://arxiv.org/pdf/1311.2524.pdf)
 2. [Selective Search for Object Recognition](https://www.koen.me/research/pub/uijlings-ijcv2013-draft.pdf)
 3. [Efficient Graph-Based Image Segmentation](http://cs.brown.edu/people/pfelzens/segment/)
-4. [ImageNet Classification with Deep Convolutional
-Neural Networks](https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf)
-5. [Spatial Pyramid Pooling in Deep Convolutional
-Networks for Visual Recognition](https://arxiv.org/pdf/1406.4729.pdf)
+4. [ImageNet Classification with Deep Convolutional Neural Networks](https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf)
+5. [Spatial Pyramid Pooling in Deep Convolutional Networks for Visual Recognition](https://arxiv.org/pdf/1406.4729.pdf)
 6. [Fast R-CNN](https://arxiv.org/pdf/1504.08083.pdf)
+7. [Faster R-CNN: Towards Real-Time Object Detection with Region Proposal Networks](https://arxiv.org/pdf/1506.01497.pdf)

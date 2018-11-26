@@ -40,7 +40,6 @@ sunluyang
 
 ### Week1 - 10.3
 
-
 - 陈洲 SVM
 - 张子博 决策树
 - 李懿文 EM HMM
@@ -50,7 +49,12 @@ sunluyang
 
 ### Week2 - 10.17
 
-
 - 陈洲 Mask R-CNN
 - 李懿文 Fast R-CNN
 - 邢欣 Xgboost
+
+### Week3 - 10.31
+
+- 王天然  Yolo1,Yolo2
+- 邢欣    Yolo3
+- 贾鑫康  GAN,DCGAN
